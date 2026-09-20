@@ -11,44 +11,58 @@ class Command(BaseCommand):
         sales, _ = Department.objects.get_or_create(name='Sales')
 
         # 2. Admin User
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser(
-                username='admin',
-                email='admin@example.com',
-                password='AdminPass2026!',
-                role='ADMIN',
-                department=eng
-            )
+        admin_user, created = User.objects.get_or_create(
+            username='admin',
+            defaults={
+                'email': 'admin@example.com',
+                'role': 'ADMIN',
+                'department': eng,
+                'is_staff': True,
+                'is_superuser': True,
+            }
+        )
+        if created:
+            admin_user.set_password('AdminPass2026!')
+            admin_user.save()
             self.stdout.write(self.style.SUCCESS('Created Admin: admin / AdminPass2026!'))
         else:
             self.stdout.write('Admin account already exists.')
 
         # 3. Manager User
-        if not User.objects.filter(username='manager_dan').exists():
-            manager = User.objects.create_user(
-                username='manager_dan',
-                email='dan@example.com',
-                password='ErpTest2026!',
-                role='MANAGER',
-                department=eng
-            )
-            LeaveBalance.objects.get_or_create(user=manager, defaults={'balance': 20})
+        manager_user, created = User.objects.get_or_create(
+            username='manager_dan',
+            defaults={
+                'email': 'dan@example.com',
+                'role': 'MANAGER',
+                'department': eng,
+                'is_staff': True,
+            }
+        )
+        if created:
+            manager_user.set_password('ErpTest2026!')
+            manager_user.save()
             self.stdout.write(self.style.SUCCESS('Created Manager: manager_dan / ErpTest2026!'))
         else:
             self.stdout.write('Manager account already exists.')
+        
+        LeaveBalance.objects.get_or_create(user=manager_user, defaults={'remaining_days': 20})
 
         # 4. Staff User
-        if not User.objects.filter(username='staff_alice').exists():
-            staff = User.objects.create_user(
-                username='staff_alice',
-                email='alice@example.com',
-                password='ErpTest2026!',
-                role='STAFF',
-                department=eng
-            )
-            LeaveBalance.objects.get_or_create(user=staff, defaults={'balance': 15})
+        staff_user, created = User.objects.get_or_create(
+            username='staff_alice',
+            defaults={
+                'email': 'alice@example.com',
+                'role': 'STAFF',
+                'department': eng,
+            }
+        )
+        if created:
+            staff_user.set_password('ErpTest2026!')
+            staff_user.save()
             self.stdout.write(self.style.SUCCESS('Created Staff: staff_alice / ErpTest2026!'))
         else:
             self.stdout.write('Staff account already exists.')
+            
+        LeaveBalance.objects.get_or_create(user=staff_user, defaults={'remaining_days': 15})
 
         self.stdout.write(self.style.SUCCESS('Database seeding completed successfully.'))
