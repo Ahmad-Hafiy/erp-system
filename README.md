@@ -25,8 +25,8 @@ A role-based ERP web application built with Python and Django. The system manage
 
 1. **Clone the Repository**
    ```bash
-   git clone <YOUR_GITHUB_REPO_URL>
-   cd <REPO_FOLDER_NAME>
+   git clone https://github.com/Ahmad-Hafiy/erp-system.git
+   cd erp-system
    ```
 
 2. **Set Up a Virtual Environment**
