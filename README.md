@@ -46,12 +46,13 @@ A role-based ERP web application built with Python and Django. The system manage
    pip install -r requirements.txt
    ```
 
-4. **Run Migrations**
+4. **Run Migrations & Seed Test Data**
    ```bash
    python manage.py migrate
+   python manage.py seed_data
    ```
 
-5. **Start the Local Development Server**
+5. **Start the Development Server**
    ```bash
    python manage.py runserver
    ```
@@ -61,15 +62,10 @@ A role-based ERP web application built with Python and Django. The system manage
 
 ## 3. Seed / Test Credentials
 
-The database can be evaluated using the predefined roles below.
+The database seeds with the following predefined roles for evaluation:
 
 | Role | Username | Password | Notes |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `hafiy` | *(Set via createsuperuser)* | Accesses `/admin/` for master records and system management |
-| **Manager** | `manager_dan` | `ErpTest2026!` | Engineering Department manager; handles team approvals |
+| **Admin** | `admin` | `AdminPass2026!` | Accesses `/admin/` for master records and system management |
+| **Manager** | `manager_dan` | `ErpTest2026!` | Assigned to Engineering Department; handles team approvals |
 | **Staff** | `staff_alice` | `ErpTest2026!` | Submits leave, expense claims, and purchase orders |
-
-> **Note**: To create or reset the administrator password locally:
-> ```bash
-> python manage.py createsuperuser
-> ```
