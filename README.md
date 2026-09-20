@@ -56,16 +56,28 @@ A role-based ERP web application built with Python and Django. The system manage
    ```bash
    python manage.py runserver
    ```
-   Open your browser at `http://127.0.0.1:8000/`.
 
 ---
 
-## 3. Seed / Test Credentials
+## 3. Application Access & Portal Navigation
 
-The database seeds with the following predefined roles for evaluation:
+The application provides two separate portals depending on administrative needs:
 
-| Role | Username | Password | Notes |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin` | `AdminPass2026!` | Accesses `/admin/` for master records and system management |
-| **Manager** | `manager_dan` | `ErpTest2026!` | Assigned to Engineering Department; handles team approvals |
-| **Staff** | `staff_alice` | `ErpTest2026!` | Submits leave, expense claims, and purchase orders |
+* **Main ERP Portal**: Navigate to `http://127.0.0.1:8000/` (or `http://127.0.0.1:8000/login/`).
+  * Used by **Staff** to create leave requests, expense claims, and purchase orders.
+  * Used by **Managers** to submit their own requests and review team submissions in their department approval queue.
+* **Admin Portal**: Navigate to `http://127.0.0.1:8000/admin/`.
+  * Used by **Administrators** for system management, configuring departments, managing user roles, and adjusting global leave balances. 
+  * If logged in as an Admin on the main portal, you can also access this via the **Admin Portal** button on the dashboard.
+
+---
+
+## 4. Seed / Test Credentials
+
+The database seeds automatically with the following predefined accounts for evaluation:
+
+| Role | Username | Password | Portal Entry Point | Purpose / Scope |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `AdminPass2026!` | `http://127.0.0.1:8000/admin/` | System configuration, user management, and department records |
+| **Manager** | `manager_dan` | `ErpTest2026!` | `http://127.0.0.1:8000/` | Engineering Department manager; evaluates pending team requests |
+| **Staff** | `staff_alice` | `ErpTest2026!` | `http://127.0.0.1:8000/` | Engineering Department employee; submits leave, claims, and purchases |
