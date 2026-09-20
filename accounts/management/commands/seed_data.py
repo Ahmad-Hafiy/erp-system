@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 role='MANAGER',
                 department=eng
             )
-            LeaveBalance.objects.get_or_create(user=manager, defaults={'annual_leave_balance': 20})
+            LeaveBalance.objects.get_or_create(user=manager, defaults={'balance': 20})
             self.stdout.write(self.style.SUCCESS('Created Manager: manager_dan / ErpTest2026!'))
         else:
             self.stdout.write('Manager account already exists.')
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 role='STAFF',
                 department=eng
             )
-            LeaveBalance.objects.get_or_create(user=staff, defaults={'annual_leave_balance': 15})
+            LeaveBalance.objects.get_or_create(user=staff, defaults={'balance': 15})
             self.stdout.write(self.style.SUCCESS('Created Staff: staff_alice / ErpTest2026!'))
         else:
             self.stdout.write('Staff account already exists.')
