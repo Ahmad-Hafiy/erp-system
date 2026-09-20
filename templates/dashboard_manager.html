@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0">Manager Portal</h3>
+        <p class="text-muted mb-0">
+            Department: <strong>{{ user.department.name|default:"Unassigned" }}</strong>
+            {% if is_admin %}<span class="badge bg-dark ms-2">Global Admin View</span>{% endif %}
+        </p>
+    </div>
+    <div>
+        <a href="{% url 'submit_leave' %}" class="btn btn-sm btn-primary me-1">+ Request Leave</a>
+        <a href="{% url 'submit_expense' %}" class="btn btn-sm btn-outline-primary me-1">+ Claim Expense</a>
+        <a href="{% url 'submit_purchase' %}" class="btn btn-sm btn-outline-secondary me-2">+ Request Purchase</a>
+        {% if is_admin %}
+            <a href="/admin/" class="btn btn-sm btn-dark">Django Admin</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Team Approval Section -->
+<h5 class="fw-bold text-secondary mb-3">Pending Department Approvals</h5>
+
+<!-- Pending Leaves -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">Team Leave Requests</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Dates</th>
+                    <th>Days</th>
+                    <th>Reason</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in team_leaves %}
+                <tr>
+                    <td><strong>{{ item.user.username }}</strong></td>
+                    <td>{{ item.start_date }} to {{ item.end_date }}</td>
+                    <td>{{ item.days_requested }}</td>
+                    <td>{{ item.reason }}</td>
+                    <td class="text-end">
+                        <form action="{% url 'review_leave' item.pk 'approve' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve leave?');">Approve</button>
+                        </form>
+                        <form action="{% url 'review_leave' item.pk 'reject' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject leave?');">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-3">No pending team leave requests.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pending Expenses -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">Team Expense Claims</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Title</th>
+                    <th>Amount</th>
+                    <th>Receipt</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in team_expenses %}
+                <tr>
+                    <td><strong>{{ item.user.username }}</strong></td>
+                    <td>{{ item.title }}</td>
+                    <td>${{ item.amount }}</td>
+                    <td>
+                        {% if item.receipt %}
+                            <a href="{{ item.receipt.url }}" target="_blank" class="btn btn-sm btn-link p-0">View Receipt</a>
+                        {% else %}
+                            <span class="text-muted small">None</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <form action="{% url 'review_expense' item.pk 'approve' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve expense?');">Approve</button>
+                        </form>
+                        <form action="{% url 'review_expense' item.pk 'reject' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject expense?');">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-3">No pending team expense claims.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pending Purchases -->
+<div class="card shadow-sm mb-5">
+    <div class="card-header bg-white fw-bold">Team Purchase Requests</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Item</th>
+                    <th>Cost</th>
+                    <th>Justification</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in team_purchases %}
+                <tr>
+                    <td><strong>{{ item.user.username }}</strong></td>
+                    <td>{{ item.item_name }}</td>
+                    <td>${{ item.estimated_cost }}</td>
+                    <td>{{ item.justification }}</td>
+                    <td class="text-end">
+                        <form action="{% url 'review_purchase' item.pk 'approve' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve purchase?');">Approve</button>
+                        </form>
+                        <form action="{% url 'review_purchase' item.pk 'reject' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject purchase?');">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-3">No pending team purchase requests.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<!-- Manager's Own Balance and Requests -->
+<h5 class="fw-bold text-secondary mb-3">My Personal Submissions (Leave Balance: {{ balance.remaining_days }} Days)</h5>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">My Leave History</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Dates</th>
+                    <th>Days</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Reviewed By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in leaves %}
+                <tr>
+                    <td>{{ item.start_date }} to {{ item.end_date }}</td>
+                    <td>{{ item.days_requested }}</td>
+                    <td>{{ item.reason }}</td>
+                    <td>
+                        {% if item.status == 'APPROVED' %}
+                            <span class="badge bg-success">APPROVED</span>
+                        {% elif item.status == 'REJECTED' %}
+                            <span class="badge bg-danger">REJECTED</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">PENDING</span>
+                        {% endif %}
+                    </td>
+                    <td><small class="text-muted">{{ item.reviewed_by.username|default:"Awaiting Admin" }}</small></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-3">No personal leave requests submitted.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Personal Expense Claims Table -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold">My Expense Claims</div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Receipt</th>
+                            <th>Status</th>
+                            <th>Reviewed By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in expenses %}
+                        <tr>
+                            <td>{{ item.title }}</td>
+                            <td>${{ item.amount }}</td>
+                            <td>
+                                {% if item.receipt %}
+                                    <a href="{{ item.receipt.url }}" target="_blank" class="btn btn-sm btn-link p-0">View Receipt</a>
+                                {% else %}
+                                    <span class="text-muted small">None</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.status == 'APPROVED' %}
+                                    <span class="badge bg-success">APPROVED</span>
+                                {% elif item.status == 'REJECTED' %}
+                                    <span class="badge bg-danger">REJECTED</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">PENDING</span>
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ item.reviewed_by.username|default:"Awaiting Admin" }}</small></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">No personal claims submitted.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Purchase Requests Table -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold">My Purchase Requests</div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Item</th>
+                            <th>Estimated Cost</th>
+                            <th>Status</th>
+                            <th>Reviewed By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in purchases %}
+                        <tr>
+                            <td>{{ item.item_name }}</td>
+                            <td>${{ item.estimated_cost }}</td>
+                            <td>
+                                {% if item.status == 'APPROVED' %}
+                                    <span class="badge bg-success">APPROVED</span>
+                                {% elif item.status == 'REJECTED' %}
+                                    <span class="badge bg-danger">REJECTED</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">PENDING</span>
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ item.reviewed_by.username|default:"Awaiting Admin" }}</small></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">No personal purchase requests submitted.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
