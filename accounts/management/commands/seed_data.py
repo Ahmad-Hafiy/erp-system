@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 'email': 'dan@example.com',
                 'role': 'MANAGER',
                 'department': eng,
-                'is_staff': True,
+                'is_staff': False,
             }
         )
         if created:
@@ -54,6 +54,7 @@ class Command(BaseCommand):
                 'email': 'alice@example.com',
                 'role': 'STAFF',
                 'department': eng,
+                'is_staff': False,
             }
         )
         if created:
