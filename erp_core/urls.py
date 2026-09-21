@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.forms import AdminAuthenticationForm
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -6,6 +7,19 @@ from django.contrib.auth import views as auth_views
 from accounts import views as account_views
 from hr import views as hr_views
 from procurement import views as procurement_views
+
+# Custom Admin Authentication Form overriding the default "staff account" message
+class CustomAdminAuthenticationForm(AdminAuthenticationForm):
+    error_messages = {
+        **AdminAuthenticationForm.error_messages,
+        'invalid_login': (
+            "Please enter the correct username and password for an administrator account. "
+            "Note that both fields may be case-sensitive."
+        ),
+    }
+
+# Assign the custom form to the Admin site
+admin.site.login_form = CustomAdminAuthenticationForm
 
 # Customize Admin portal headers and titles
 admin.site.site_header = "Company ERP Administration"
